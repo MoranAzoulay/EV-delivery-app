@@ -4,3 +4,4 @@ streamlit-folium
 osmnx
 geopy
 networkx
+streamlit-js-eval

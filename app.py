@@ -23,10 +23,10 @@ def get_distance_km(origin_coords, destination):
 def get_nav_link(dest_addr):
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
     
-    # שליפת הבחירה לפי ה-key שהגדרנו
+    # משיכת הבחירה מה-key שהגדרנו ב-Sidebar
     v_type = st.session_state.get('my_vehicle', '')
     
-    if "אופניים" in v_type:
+    if "אופניים" in v_type or "E-Bike" in v_type:
         mode = "bicycling"
     elif any(word in v_type for word in ["קטנוע", "בליץ", "Scooter", "Delivery", "קורקינט"]):
         mode = "motorcycle"
@@ -50,9 +50,12 @@ location = get_geolocation()
 curr_coords = (location['coords']['latitude'], location['coords']['longitude']) if location else None
 
 # --- 5. Sidebar: הגדרות ---
-st.sidebar.title("⚙️ הגדרות נסיעה")
-v_name = st.selectbox("בחר כלי רכב:", list(VEHICLES.keys()), key='my_vehicle')
-v_data = VEHICLES[v_name]
+# בתוך ה-Sidebar (תפריט הצד)
+with st.sidebar:
+    st.header("⚙️ הגדרות נסיעה")
+    # כאן אנחנו מגדירים את בחירת הרכב עם Key ברור
+    v_name = st.selectbox("בחר כלי רכב:", list(VEHICLES.keys()), key='my_vehicle')
+    v_data = VEHICLES[v_name]
 
 if st.sidebar.button("🔄 איפוס יום חדש"):
     st.session_state.total_km_today = 0.0

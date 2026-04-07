@@ -22,8 +22,18 @@ def get_distance_km(origin_coords, destination):
 
 def get_nav_link(dest_addr):
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
-    return f"https://www.google.com/maps/dir/?api=1&destination={encoded_dest}&travelmode=bicycling"
-
+    
+    # שליפת סוג הרכב שנבחר כרגע מהמערכת - זה פותר את הצורך בשינוי בשאר הקוד
+    v_type = st.session_state.get('selected_vehicle_name', '')
+    
+    if "אופניים" in v_type:
+        mode = "bicycling"
+    elif "קטנוע" in v_type or "בליץ" in v_type or "Delivery" in v_type:
+        mode = "motorcycle"
+    else:
+        mode = "driving"
+        
+    return f"https://www.google.com/maps/dir/?api=1&destination={encoded_dest}&travelmode={mode}"
 # --- 3. נתוני רכבים ---
 VEHICLES = {
     "E-Bike (אופניים)": {"voltage": 36, "capacity": 15, "cons": [1.2, 1.5, 2.0], "default_bars": 3},

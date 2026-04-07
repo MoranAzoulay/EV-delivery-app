@@ -23,12 +23,14 @@ def get_distance_km(origin_coords, destination):
 def get_nav_link(dest_addr):
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
     
-    # שליפת סוג הרכב שנבחר כרגע מהמערכת - זה פותר את הצורך בשינוי בשאר הקוד
-    v_type = st.session_state.get('selected_vehicle_name', '')
+    # בדיקה מה המפתח המדויק שבו נשמר שם הרכב
+    v_type = st.session_state.get('selected_vehicle_name', 
+             st.session_state.get('vehicle_name', 'Car'))
     
+    # הדפסה לבדיקה (יופיע רק בטרמינל/לוגים אם תצטרך)
     if "אופניים" in v_type:
         mode = "bicycling"
-    elif "קטנוע" in v_type or "בליץ" in v_type or "Delivery" in v_type:
+    elif any(word in v_type for word in ["קטנוע", "בליץ", "Scooter", "Delivery"]):
         mode = "motorcycle"
     else:
         mode = "driving"

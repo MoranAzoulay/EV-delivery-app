@@ -21,25 +21,21 @@ def get_distance_km(origin_coords, destination):
     except: return 0.0, None
 
 def get_nav_link(dest_addr):
+    # קידוד הכתובת
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
     
-    # הפתרון הכי בטוח: אנחנו נגדיר את המוד לפי מה שמופיע כרגע ב-Session State
-    # ננסה למצוא את הבחירה של המשתמש בכל הדרכים האפשריות
-    selected = ""
-    for key in st.session_state.keys():
-        if 'vehicle' in key.lower() or 'choice' in key.lower():
-            selected = str(st.session_state[key])
-            break
-
+    # שליפה ישירה מהמפתח שהגדרנו בשלב 1
+    v_type = st.session_state.get('my_vehicle', '')
+    
     # קביעת מצב הניווט
-    if "אופניים" in selected or "E-Bike" in selected:
+    if "אופניים" in v_type or "E-Bike" in v_type:
         mode = "bicycling"
-    elif any(word in selected for word in ["קטנוע", "בליץ", "Scooter", "Delivery", "קורקינט"]):
+    elif any(word in v_type for word in ["קטנוע", "בליץ", "Scooter", "Delivery", "קורקינט"]):
         mode = "motorcycle"
     else:
-        # אם זה רכב או אם לא מצאנו זיהוי, נשתמש בברירת מחדל של רכב
         mode = "driving"
         
+    # החזרה של הקישור המדויק
     return f"https://www.google.com/maps/dir/?api=1&destination={encoded_dest}&travelmode={mode}"
 # --- 3. נתוני רכבים ---
 VEHICLES = {
@@ -58,7 +54,7 @@ curr_coords = (location['coords']['latitude'], location['coords']['longitude']) 
 
 # --- 5. Sidebar: הגדרות ---
 st.sidebar.title("⚙️ הגדרות נסיעה")
-v_name = st.sidebar.selectbox("בחר כלי רכב", list(VEHICLES.keys()))
+selected_vehicle_name = st.selectbox("בחר כלי רכב:", list(VEHICLES.keys()), key='my_vehicle')
 v_data = VEHICLES[v_name]
 
 if st.sidebar.button("🔄 איפוס יום חדש"):

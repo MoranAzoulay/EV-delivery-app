@@ -21,21 +21,18 @@ def get_distance_km(origin_coords, destination):
     except: return 0.0, None
 
 def get_nav_link(dest_addr):
-    # קידוד הכתובת
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
     
-    # שליפה ישירה מהמפתח שהגדרנו בשלב 1
+    # שליפת הבחירה לפי ה-key שהגדרנו
     v_type = st.session_state.get('my_vehicle', '')
     
-    # קביעת מצב הניווט
-    if "אופניים" in v_type or "E-Bike" in v_type:
+    if "אופניים" in v_type:
         mode = "bicycling"
     elif any(word in v_type for word in ["קטנוע", "בליץ", "Scooter", "Delivery", "קורקינט"]):
         mode = "motorcycle"
     else:
         mode = "driving"
         
-    # החזרה של הקישור המדויק
     return f"https://www.google.com/maps/dir/?api=1&destination={encoded_dest}&travelmode={mode}"
 # --- 3. נתוני רכבים ---
 VEHICLES = {
@@ -54,7 +51,7 @@ curr_coords = (location['coords']['latitude'], location['coords']['longitude']) 
 
 # --- 5. Sidebar: הגדרות ---
 st.sidebar.title("⚙️ הגדרות נסיעה")
-selected_vehicle_name = st.selectbox("בחר כלי רכב:", list(VEHICLES.keys()), key='my_vehicle')
+v_name = st.selectbox("בחר כלי רכב:", list(VEHICLES.keys()), key='my_vehicle')
 v_data = VEHICLES[v_name]
 
 if st.sidebar.button("🔄 איפוס יום חדש"):

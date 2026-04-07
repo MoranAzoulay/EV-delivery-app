@@ -23,16 +23,21 @@ def get_distance_km(origin_coords, destination):
 def get_nav_link(dest_addr):
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
     
-    # בדיקה מה המפתח המדויק שבו נשמר שם הרכב
-    v_type = st.session_state.get('selected_vehicle_name', 
-             st.session_state.get('vehicle_name', 'Car'))
-    
-    # הדפסה לבדיקה (יופיע רק בטרמינל/לוגים אם תצטרך)
-    if "אופניים" in v_type:
+    # הפתרון הכי בטוח: אנחנו נגדיר את המוד לפי מה שמופיע כרגע ב-Session State
+    # ננסה למצוא את הבחירה של המשתמש בכל הדרכים האפשריות
+    selected = ""
+    for key in st.session_state.keys():
+        if 'vehicle' in key.lower() or 'choice' in key.lower():
+            selected = str(st.session_state[key])
+            break
+
+    # קביעת מצב הניווט
+    if "אופניים" in selected or "E-Bike" in selected:
         mode = "bicycling"
-    elif any(word in v_type for word in ["קטנוע", "בליץ", "Scooter", "Delivery"]):
+    elif any(word in selected for word in ["קטנוע", "בליץ", "Scooter", "Delivery", "קורקינט"]):
         mode = "motorcycle"
     else:
+        # אם זה רכב או אם לא מצאנו זיהוי, נשתמש בברירת מחדל של רכב
         mode = "driving"
         
     return f"https://www.google.com/maps/dir/?api=1&destination={encoded_dest}&travelmode={mode}"

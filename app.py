@@ -23,14 +23,15 @@ def get_distance_km(origin_coords, destination):
 def get_nav_link(dest_addr):
     encoded_dest = urllib.parse.quote(f"{dest_addr}, Israel")
     
-    # משיכת הבחירה מה-key שהגדרנו ב-Sidebar
+    # שליפת הבחירה מה-key שהגדרנו ב-Sidebar
     v_type = st.session_state.get('my_vehicle', '')
     
-    if "אופניים" in v_type or "E-Bike" in v_type:
+    # הגדרת מצבי הניווט לפי הבקשה שלך:
+    if "אופניים" in v_type or "קורקינט" in v_type or "E-Bike" in v_type or "Scooter" in v_type:
+        # אופניים וקורקינט מקבלים מסלול אופניים
         mode = "bicycling"
-    elif any(word in v_type for word in ["קטנוע", "בליץ", "Scooter", "Delivery", "קורקינט"]):
-        mode = "motorcycle"
     else:
+        # כל השאר (קטנוע, בליץ, רכב, מסחרית) מקבלים מסלול רכב רגיל
         mode = "driving"
         
     return f"https://www.google.com/maps/dir/?api=1&destination={encoded_dest}&travelmode={mode}"
